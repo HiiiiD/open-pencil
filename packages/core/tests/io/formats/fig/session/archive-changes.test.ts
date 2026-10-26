@@ -125,17 +125,30 @@ test('a gap edit saves the size of the hugging frames around it', async () => {
   expect(saved('Column').transform?.m12).toBe(0)
 })
 
-test('a gap edit committed from a preview saves the layers its layout moved', async () => {
+test('a gap edit committed from a preview saves the gap and the layers its layout moved', async () => {
   const { graph, layer } = await openColumn(12, [0, 32])
   const editor = createEditor({ graph })
   const preview = editor.beginNodePreview('Gap')
+  preview.update(layer('Column').id, { itemSpacing: 20 })
   preview.update(layer('Column').id, { itemSpacing: 40 })
   preview.commit()
   expect(layer('B').y).toBe(60)
   const saved = await savedRecords(graph)
+  expect(saved('Column').stackSpacing).toBe(40)
   expect(saved('B').transform?.m12).toBe(60)
   expect(saved('Column').size?.y).toBe(80)
   expect(saved('Outer').size?.y).toBe(80)
+})
+
+test('a cancelled gap preview leaves the archive as it was', async () => {
+  const { graph, layer } = await openColumn(12, [0, 32])
+  const preview = createEditor({ graph }).beginNodePreview('Gap')
+  preview.update(layer('Column').id, { itemSpacing: 40 })
+  preview.cancel()
+  expect([...(archiveChanges(graph)?.touched ?? [])]).toEqual([])
+  const saved = await savedRecords(graph)
+  expect(saved('Column').stackSpacing).toBe(12)
+  expect(saved('B').transform?.m12).toBe(32)
 })
 
 /** A component in a set and an instance of it, its layers saved where layout puts them. */
