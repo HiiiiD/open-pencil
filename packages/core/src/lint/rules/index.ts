@@ -3,6 +3,7 @@ export { default as noDefaultNames } from './no-default-names'
 export { default as preferAutoLayout } from './prefer-auto-layout'
 export { default as consistentSpacing } from './consistent-spacing'
 export { default as consistentRadius } from './consistent-radius'
+export { default as consistentTypography } from './consistent-typography'
 export { default as colorContrast } from './color-contrast'
 export { default as touchTargetSize } from './touch-target-size'
 export { default as textStyleRequired } from './text-style-required'
@@ -21,6 +22,7 @@ import type { Rule } from '#core/lint/types'
 import colorContrast from './color-contrast'
 import consistentRadius from './consistent-radius'
 import consistentSpacing from './consistent-spacing'
+import consistentTypography from './consistent-typography'
 import effectStyleRequired from './effect-style-required'
 import minTextSize from './min-text-size'
 import noDeeplyNested from './no-deeply-nested'
@@ -42,6 +44,7 @@ export const allRules: Record<string, Rule> = {
   'prefer-auto-layout': preferAutoLayout,
   'consistent-spacing': consistentSpacing,
   'consistent-radius': consistentRadius,
+  'consistent-typography': consistentTypography,
   'color-contrast': colorContrast,
   'touch-target-size': touchTargetSize,
   'text-style-required': textStyleRequired,

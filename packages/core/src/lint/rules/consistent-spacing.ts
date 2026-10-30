@@ -10,9 +10,12 @@ export default defineRule({
   match: ['FRAME', 'COMPONENT'],
   check(node, context) {
     if (node.layoutMode === 'NONE') return
-    const config = context.getConfig() as { base?: number } | undefined
+    const config = context.getConfig() as { base?: number; strict?: boolean } | undefined
     const base = config?.base ?? 4
-    const valid = (value: number) => SPACING_SCALE.includes(value) || isMultipleOf(value, base)
+    // strict: only multiples of base are on the grid, the built-in scale (which has 1 and 2) is ignored
+    const strict = config?.strict === true
+    const scale = strict ? [] : SPACING_SCALE
+    const valid = (value: number) => scale.includes(value) || isMultipleOf(value, base)
     const values = [
       ['itemSpacing', node.itemSpacing],
       ['paddingTop', node.paddingTop],
@@ -26,7 +29,7 @@ export default defineRule({
         const multiples = [Math.floor(value / step) * step, Math.ceil(value / step) * step]
         const suggested = nearestValue(
           value,
-          [...SPACING_SCALE, ...multiples].filter((candidate) => candidate > 0)
+          [...scale, ...multiples].filter((candidate) => candidate > 0)
         )
         context.report({
           node,
